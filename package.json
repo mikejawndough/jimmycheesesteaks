@@ -4,7 +4,9 @@
   "description": "Smart delivery system for Jimmy's Cheesesteaks",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "predeploy": "git add . && git commit -m 'Building for deployment' || true",
+    "deploy": "gh-pages -d public"
   },
   "dependencies": {
     "@sendgrid/mail": "^8.1.4",
