@@ -1,0 +1,155 @@
+body {
+  font-family: 'DynaPuff', cursive;
+  margin: 0;
+  padding: 0;
+  background-color: #ffffff;
+  color: #1D428A;
+}
+
+h1, h2, h3 {
+  text-align: center;
+  color: #1D428A;
+}
+
+.checkout-container {
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 20px;
+  background-color: #ffffff;
+}
+
+ul#cart-items {
+  list-style: none;
+  padding: 0;
+}
+
+.total {
+  font-weight: bold;
+  text-align: right;
+  font-size: 18px;
+  margin-top: 10px;
+  color: #F58426;
+}
+
+.form-section {
+  background-color: #f9f9f9;
+  padding: 20px;
+  margin-top: 30px;
+  border-radius: 10px;
+  box-shadow: 0 0 6px rgba(0,0,0,0.05);
+}
+
+label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #1D428A;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="date"],
+select {
+  width: 100%;
+  padding: 10px;
+  margin-top: 6px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-family: 'DynaPuff', cursive;
+}
+
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.radio-group label,
+.form-section label[for] {
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+  font-size: 16px;
+  margin: 8px 0;
+  cursor: pointer;
+}
+
+input[type="radio"],
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  height: 18px;
+  width: 18px;
+  border: 2px solid #1D428A;
+  border-radius: 50%;
+  margin-right: 10px;
+  position: relative;
+  cursor: pointer;
+  background-color: white;
+}
+
+input[type="radio"]:checked::before,
+input[type="checkbox"]:checked::before {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+  background-color: #F58426;
+}
+
+.radio-group label:hover,
+input[type="radio"]:hover + label,
+input[type="checkbox"]:hover + label {
+  background-color: #f0f0f0;
+  border-radius: 6px;
+  padding: 5px;
+}
+
+#paypal-button-container {
+  margin-top: 15px;
+}
+
+button#place-order {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  background-color: #F58426;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  margin-top: 20px;
+  cursor: pointer;
+  font-family: 'DynaPuff', cursive;
+}
+
+button#place-order:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.autocomplete-container {
+  position: relative;
+}
+
+#schedule-delivery,
+#recurring-options {
+  display: none;
+}
+
+.datetime-dropdowns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+
+input[type="date"] {
+  font-family: 'DynaPuff', cursive;
+}

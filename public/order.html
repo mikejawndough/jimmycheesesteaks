@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Order - Jimmy’s Cheesesteaks</title>
+  <link href="https://fonts.googleapis.com/css2?family=DynaPuff:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    body {
+      font-family: 'DynaPuff', cursive;
+      margin: 0;
+      padding: 0;
+      background-color: #ffffff;
+      color: #1D428A;
+      text-align: center;
+    }
+
+    .menu {
+      padding: 30px 0;
+    }
+
+    .menu-category {
+      font-size: 28px;
+      font-weight: bold;
+      margin-top: 60px;
+      color: #1D428A;
+    }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 30px;
+      padding: 30px 20px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .menu-item {
+      background-color: #f5f5f5;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .menu-image {
+      width: 100%;
+      max-height: 200px;
+      object-fit: contain;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      background-color: white;
+    }
+
+    .price {
+      display: block;
+      font-weight: bold;
+      margin: 10px 0;
+      color: #F58426;
+    }
+
+    .infused-group {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      width: 100%;
+      margin: 10px 0;
+    }
+
+    .infused-select, .quantity-select {
+      flex: 1;
+      padding: 6px;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+
+    .quantity-select {
+      max-width: 80px;
+    }
+
+    .menu button {
+      margin: 5px;
+      padding: 10px 16px;
+      border: none;
+      background-color: #1D428A;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .menu button:hover {
+      background-color: #163369;
+    }
+  </style>
+</head>
+
+<script src="/js/age-check.js"></script>
+<body>
+  <div id="header-placeholder"></div>
+  <script>
+    fetch('/header.html')
+      .then(res => res.text())
+      .then(data => {
+        document.getElementById('header-placeholder').innerHTML = data;
+        const script = document.createElement('script');
+        script.src = '/js/header.js';
+        document.body.appendChild(script);
+      });
+  </script>
+
+  <section class="menu">
+    <h1>Order Your Cheesesteak</h1>
+    <div class="menu-category">Cheesesteaks</div>
+    <div class="menu-grid">
+      <!-- The Classic Philly -->
+      <div class="menu-item">
+        <h3>The Classic Philly</h3>
+        <img src="classic_cheesesteak.png" alt="The Classic Philly" class="menu-image">
+        <p>Ribeye steak, melted cheese whiz, sautéed onions on a hoagie roll.</p>
+        <span class="price">$14.99</span>
+        <div class="infused-group">
+          <select class="infused-select" data-base-price="14.99">
+            <option value="regular">Regular</option>
+            <option value="infused">Infused (+$20)</option>
+          </select>
+          <select class="quantity-select">
+            <option value="1">Qty: 1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+          </select>
+        </div>
+        <button onclick="addFavorite({ name: 'The Classic Philly', price: 14.99, infused: false })">Add to Favorites</button>
+        <button class="add-to-cart" data-name="The Classic Philly" data-price="14.99" onclick="addToCart(this)">Add to Cart</button>
+      </div>
+
+      <!-- The Madison Square Garden -->
+      <div class="menu-item">
+        <h3>The Madison Square Garden</h3>
+        <img src="msg_cheesesteak.png" alt="The Madison Square Garden" class="menu-image">
+        <p>Ribeye, green peppers, onions, mushrooms, provolone cheese.</p>
+        <span class="price">$15.99</span>
+        <div class="infused-group">
+          <select class="infused-select" data-base-price="15.99">
+            <option value="regular">Regular</option>
+            <option value="infused">Infused (+$20)</option>
+          </select>
+          <select class="quantity-select">
+            <option value="1">Qty: 1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+          </select>
+        </div>
+        <button onclick="addFavorite({ name: 'The Madison Square Garden', price: 15.99, infused: false })">Add to Favorites</button>
+        <button class="add-to-cart" data-name="The Madison Square Garden" data-price="15.99" onclick="addToCart(this)">Add to Cart</button>
+      </div>
+
+      <!-- The Empire State -->
+      <div class="menu-item">
+        <h3>The Empire State</h3>
+        <img src="classic_cheesesteak.png" alt="The Empire State" class="menu-image">
+        <p>Double meat, double cheese, onions, and hot pepper spread.</p>
+        <span class="price">$18.99</span>
+        <div class="infused-group">
+          <select class="infused-select" data-base-price="18.99">
+            <option value="regular">Regular</option>
+            <option value="infused">Infused (+$20)</option>
+          </select>
+          <select class="quantity-select">
+            <option value="1">Qty: 1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+          </select>
+        </div>
+        <button onclick="addFavorite({ name: 'The Empire State', price: 18.99, infused: false })">Add to Favorites</button>
+        <button class="add-to-cart" data-name="The Empire State" data-price="18.99" onclick="addToCart(this)">Add to Cart</button>
+      </div>
+
+      <!-- The Spicy Hudson -->
+      <div class="menu-item">
+        <h3>The Spicy Hudson</h3>
+        <img src="chicken_cheesesteak.png" alt="The Spicy Hudson" class="menu-image">
+        <p>Sliced chicken breast, buffalo sauce, blue cheese, American cheese.</p>
+        <span class="price">$13.99</span>
+        <div class="infused-group">
+          <select class="infused-select" data-base-price="13.99">
+            <option value="regular">Regular</option>
+            <option value="infused">Infused (+$20)</option>
+          </select>
+          <select class="quantity-select">
+            <option value="1">Qty: 1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+          </select>
+        </div>
+        <button onclick="addFavorite({ name: 'The Spicy Hudson', price: 13.99, infused: false })">Add to Favorites</button>
+        <button class="add-to-cart" data-name="The Spicy Hudson" data-price="13.99" onclick="addToCart(this)">Add to Cart</button>
+      </div>
+
+      <!-- The Broadway Veggie -->
+      <div class="menu-item">
+        <h3>The Broadway Veggie</h3>
+        <img src="msg_cheesesteak.png" alt="The Broadway Veggie" class="menu-image">
+        <p>Grilled mushrooms, bell peppers, onions, zucchini, provolone, garlic aioli.</p>
+        <span class="price">$12.99</span>
+        <div class="infused-group">
+          <select class="infused-select" data-base-price="12.99">
+            <option value="regular">Regular</option>
+            <option value="infused">Infused (+$20)</option>
+          </select>
+          <select class="quantity-select">
+            <option value="1">Qty: 1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+          </select>
+        </div>
+        <button onclick="addFavorite({ name: 'The Broadway Veggie', price: 12.99, infused: false })">Add to Favorites</button>
+        <button class="add-to-cart" data-name="The Broadway Veggie" data-price="12.99" onclick="addToCart(this)">Add to Cart</button>
+      </div>
+    </div>
+
+    <!-- Drinks Category -->
+    <div class="menu-category">Drinks</div>
+    <div class="menu-grid">
+      <div class="menu-item">
+        <h3>Homemade Lemonade</h3>
+        <img src="IMG_0849.jpg" alt="Homemade Lemonade" class="menu-image">
+        <span class="price">$3.00</span>
+        <button onclick="addFavorite({ name: 'Homemade Lemonade', price: 3.00, infused: false })">Add to Favorites</button>
+        <button class="add-to-cart" data-name="Homemade Lemonade" data-price="3.00" onclick="addToCart(this)">Add to Cart</button>
+      </div>
+      <div class="menu-item">
+        <h3>Water Bottle</h3>
+        <img src="water.jpeg.webp" alt="Water Bottle" class="menu-image">
+        <span class="price">$1.50</span>
+        <button onclick="addFavorite({ name: 'Water Bottle', price: 1.50, infused: false })">Add to Favorites</button>
+        <button class="add-to-cart" data-name="Water Bottle" data-price="1.50" onclick="addToCart(this)">Add to Cart</button>
+      </div>
+    </div>
+
+    <!-- Desserts & Sides Category -->
+    <div class="menu-category">Desserts & Sides</div>
+    <div class="menu-grid">
+      <div class="menu-item">
+        <h3>NY Style Cheesecake Slice</h3>
+        <img src="cheesecake.png" alt="NY Style Cheesecake Slice" class="menu-image">
+        <span class="price">$6.99</span>
+        <button onclick="addFavorite({ name: 'NY Style Cheesecake Slice', price: 6.99, infused: false })">Add to Favorites</button>
+        <button class="add-to-cart" data-name="NY Style Cheesecake Slice" data-price="6.99" onclick="addToCart(this)">Add to Cart</button>
+      </div>
+      <div class="menu-item">
+        <h3>Fudge Brownie</h3>
+        <img src="brownie.png" alt="Fudge Brownie" class="menu-image">
+        <span class="price">$5.99</span>
+        <button onclick="addFavorite({ name: 'Fudge Brownie', price: 5.99, infused: false })">Add to Favorites</button>
+        <button class="add-to-cart" data-name="Fudge Brownie" data-price="5.99" onclick="addToCart(this)">Add to Cart</button>
+      </div>
+      <div class="menu-item">
+        <h3>Knickerbocker Waffle Fries</h3>
+        <img src="waffle_fries.png" alt="Knickerbocker Waffle Fries" class="menu-image">
+        <span class="price">$4.99</span>
+        <button onclick="addFavorite({ name: 'Knickerbocker Waffle Fries', price: 4.99, infused: false })">Add to Favorites</button>
+        <button class="add-to-cart" data-name="Knickerbocker Waffle Fries" data-price="4.99" onclick="addToCart(this)">Add to Cart</button>
+      </div>
+    </div>
+  </section>
+      
+        <!-- Footer Placeholder -->
+<div id="footer-placeholder"></div>
+<script>
+  fetch('footer.html')
+    .then(res => res.text())
+    .then(html => {
+      document.getElementById('footer-placeholder').innerHTML = html;
+      const script = document.createElement("script");
+      script.src = "/js/footer.js";
+      document.body.appendChild(script);
+    })
+    .catch(err => console.error("Error loading footer:", err));
+</script>
+      
+        <!-- Firebase & Core -->
+        <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+        <script src="/js/firebase-config.js"></script>
+        <script src="/js/app.js"></script>
+        <script src="/js/order.js"></script>
+        <script src="/js/header.js"></script>
+        <script src="/js/footer.js"></script>
+
+        <!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+<script src="/js/firebase-config.js"></script>
+
+<!-- Load Header + Auth Logic -->
+<script>
+  fetch('header.html')
+    .then(res => res.text())
+    .then(html => {
+      document.getElementById('header-placeholder').innerHTML = html;
+
+      const userMenu = document.getElementById('user-menu');
+      const dropdown = document.getElementById('auth-dropdown');
+      const loginForm = document.getElementById('login-form');
+      const signupForm = document.getElementById('signup-form');
+      const title = document.getElementById('auth-title');
+
+      auth.onAuthStateChanged(user => {
+        if (user) {
+          userMenu.textContent = user.displayName || user.email;
+          userMenu.onclick = () => auth.signOut().then(() => window.location.reload());
+          dropdown.style.display = 'none';
+        } else {
+          userMenu.textContent = "Sign In";
+          userMenu.onclick = () => {
+            toggleAuthMode('login');
+            dropdown.style.display = 'block';
+          };
+        }
+      });
+
+      window.handleLogin = function (event) {
+        event.preventDefault();
+        const email = document.getElementById("login-email").value.trim();
+        const password = document.getElementById("login-password").value;
+
+        auth.signInWithEmailAndPassword(email, password)
+          .then(() => {
+            dropdown.style.display = 'none';
+            window.location.reload();
+          })
+          .catch(error => alert("Login failed: " + error.message));
+      };
+
+      window.handleSignup = function (event) {
+        event.preventDefault();
+        const name = document.getElementById("signup-name").value.trim();
+        const email = document.getElementById("signup-email").value.trim();
+        const password = document.getElementById("signup-password").value;
+
+        auth.createUserWithEmailAndPassword(email, password)
+          .then(userCred => {
+            return userCred.user.updateProfile({ displayName: name })
+              .then(() => userCred.user.sendEmailVerification());
+          })
+          .then(() => {
+            alert("Signup successful. Please verify your email.");
+            dropdown.style.display = 'none';
+            window.location.reload();
+          })
+          .catch(error => alert("Signup failed: " + error.message));
+      };
+
+      window.handlePasswordReset = function () {
+        const email = document.getElementById("login-email").value.trim();
+        if (!email) {
+          alert("Please enter your email above first.");
+          return;
+        }
+
+        auth.sendPasswordResetEmail(email)
+          .then(() => alert("Password reset email sent."))
+          .catch(error => alert("Error: " + error.message));
+      };
+
+      window.toggleAuthMode = function (mode) {
+        if (mode === 'signup') {
+          loginForm.style.display = 'none';
+          signupForm.style.display = 'block';
+          title.textContent = 'Create Account';
+        } else {
+          loginForm.style.display = 'block';
+          signupForm.style.display = 'none';
+          title.textContent = 'Login';
+        }
+      };
+
+      document.addEventListener("click", function (e) {
+        if (!dropdown.contains(e.target) && !userMenu.contains(e.target)) {
+          dropdown.style.display = "none";
+        }
+      });
+    });
+</script>
+      </body>
+      </html>

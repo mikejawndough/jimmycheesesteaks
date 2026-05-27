@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Driver Dashboard - Jimmy’s Cheesesteaks</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=DynaPuff:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css"> 
+  <style>
+    body {
+      font-family: 'DynaPuff', cursive;
+      background-color: #fff;
+      color: #1D428A;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+
+    header {
+      width: 100%;
+      background-color: #1D428A;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .dashboard-container {
+      margin-top: 100px;
+      padding: 20px;
+    }
+
+    .dashboard-container h1 {
+      font-size: 36px;
+      margin-bottom: 20px;
+    }
+
+    .order-list {
+      background-color: #f9f9f9;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      display: inline-block;
+      width: 100%;
+      max-width: 800px;
+    }
+
+    footer {
+      background-color: #1D428A;
+      color: white;
+      text-align: center;
+      padding: 15px;
+      position: relative;
+      bottom: 0;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div id="header-placeholder"></div>
+  <script>
+    fetch('header.html')
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById('header-placeholder').innerHTML = data;
+      })
+      .catch(error => {
+        console.error('Error loading header:', error);
+      });
+  </script>
+  
+  <h1>Driver Dashboard</h1>
+
+  <div id="login-section">
+    <input id="email" type="email" placeholder="Driver Email" required />
+    <input id="password" type="password" placeholder="Password" required />
+    <br />
+    <button onclick="loginDriver()">Login</button>
+    <p id="login-error" style="color: red;"></p>
+  </div>
+
+  <div id="driver-ui" class="hidden">
+    <p>You are logged in as a delivery driver.</p>
+    <button onclick="logoutDriver()">Logout</button>
+    <div id="notification-banner" style="display:none; background:#F58426; color:white; padding:10px; font-weight:bold;"></div>
+    <div id="assigned-orders"></div>
+  </div>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+  <script src="/js/firebase-config.js"></script>
+
+  <!-- Driver Logic -->
+  <script>
+    const assignedOrdersDiv = document.getElementById("assigned-orders");
+
+    auth.onAuthStateChanged(user => {
+      const loggedIn = !!user;
+      document.getElementById("login-section").classList.toggle("hidden", loggedIn);
+      document.getElementById("driver-ui").classList.toggle("hidden", !loggedIn);
+      if (loggedIn) loadAssignedOrders(user.email);
+    });
+
+    function loginDriver() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      auth.signInWithEmailAndPassword(email, password)
+        .then(() => document.getElementById("login-error").textContent = "")
+        .catch(err => document.getElementById("login-error").textContent = err.message);
+    }
+
+    function logoutDriver() {
+      auth.signOut();
+    }
+
+    function loadAssignedOrders(driverEmail) {
+      db.collection("orders").where("assignedTo", "==", driverEmail)
+        .orderBy("createdAt", "desc")
+        .onSnapshot(snapshot => {
+          const prevCount = window.lastOrderCount || 0;
+          const currentCount = snapshot.size;
+          assignedOrdersDiv.innerHTML = "<h2>Assigned Orders</h2>";
+
+          if (prevCount && currentCount > prevCount) {
+            const banner = document.getElementById("notification-banner");
+            if (banner) {
+              banner.textContent = "You’ve been assigned a new order!";
+              banner.style.display = "block";
+              setTimeout(() => { banner.style.display = "none"; }, 5000);
+            }
+          }
+
+          window.lastOrderCount = currentCount;
+
+          if (snapshot.empty) {
+            assignedOrdersDiv.innerHTML += "<p>No orders assigned to you.</p>";
+            return;
+          }
+
+          snapshot.forEach(doc => {
+            const order = doc.data();
+            const box = document.createElement("div");
+            box.className = "order-box";
+            box.innerHTML = `
+              <strong>Customer:</strong> ${order.customerName}<br>
+              <strong>Phone:</strong> ${order.phoneNumber}<br>
+              <strong>Address:</strong> ${order.address}<br>
+              <strong>Status:</strong> ${order.status}<br>
+              <div id="countdown-${doc.id}" style="font-weight:bold;color:#F58426;"></div>
+              <button onclick="startDelivery('${doc.id}')">Start Delivery</button>
+              <button onclick="markDelivered('${doc.id}')">Mark as Delivered</button>
+              <button onclick="addMoreTime('${doc.id}', ${parseInt(order.status?.match(/ETA: (\\d+)/)?.[1] || 0)})">Add 5 More Minutes</button>
+              <ul>
+                ${order.items.map(i => `<li>${i.name}${i.infused ? " (Infused)" : ""} x${i.quantity || 1}</li>`).join('')}
+              </ul>
+            `;
+            assignedOrdersDiv.appendChild(box);
+
+            const etaMatch = order.status.match(/ETA: (\\d+) mins/);
+            if (etaMatch) {
+              let minutes = parseInt(etaMatch[1]);
+              const countdownEl = document.getElementById("countdown-" + doc.id);
+              function updateCountdown() {
+                if (minutes >= 0) {
+                  countdownEl.textContent = `ETA Countdown: ${minutes} min${minutes !== 1 ? 's' : ''} remaining`;
+                  minutes--;
+                  setTimeout(updateCountdown, 60000);
+                } else {
+                  countdownEl.textContent = "ETA has passed.";
+                }
+              }
+              window["countdown_" + doc.id] = () => { minutes += 5; updateCountdown(); };
+              updateCountdown();
+            }
+          });
+        }, err => {
+          assignedOrdersDiv.innerHTML = "<p>Error loading orders.</p>";
+          console.error(err);
+        });
+    }
+
+    function startDelivery(orderId) {
+      fetch(`/mapbox-eta/${orderId}`)
+        .then(res => res.json())
+        .then(data => {
+          const etaText = data.eta || "soon";
+          return db.collection("orders").doc(orderId).update({
+            status: `Out for Delivery (ETA: ${etaText})`
+          });
+        })
+        .then(() => alert("Order marked as Out for Delivery."))
+        .catch(err => {
+          console.error("Failed to start delivery:", err);
+          alert("Failed to update delivery status.");
+        });
+    }
+
+    function addMoreTime(orderId, currentETA) {
+      const newETA = currentETA + 5;
+      db.collection("orders").doc(orderId).update({
+        status: `Out for Delivery (ETA: ${newETA} mins)`
+      }).then(() => {
+        if (typeof window["countdown_" + orderId] === "function") {
+          window["countdown_" + orderId]();
+        }
+        alert("Added 5 more minutes to ETA.");
+      }).catch(err => {
+        alert("Failed to update ETA.");
+        console.error(err);
+      });
+    }
+
+    function markDelivered(orderId) {
+      if (!confirm("Mark this order as completed?")) return;
+      db.collection("orders").doc(orderId).update({
+        status: "Completed"
+      }).then(() => {
+        alert("Order marked as delivered.");
+      }).catch(err => {
+        alert("Failed to update status.");
+        console.error(err);
+      });
+    }
+  </script>
+
+  <!-- Footer Placeholder -->
+<div id="footer-placeholder"></div>
+<script>
+  fetch('footer.html')
+    .then(res => res.text())
+    .then(html => {
+      document.getElementById('footer-placeholder').innerHTML = html;
+      const script = document.createElement("script");
+      script.src = "/js/footer.js";
+      document.body.appendChild(script);
+    })
+    .catch(err => console.error("Error loading footer:", err));
+</script>
+
+  <script src="/js/footer.js"></script>
+</body>
+</html>
